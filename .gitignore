@@ -7,11 +7,13 @@
 # User-specific files
 /.idea/
 *container-data/
+DynamoDB/*.db
 *.rsuser
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
+*.DS_Store
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

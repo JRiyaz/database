@@ -1,0 +1,34 @@
+
+services:
+  redis:
+    image: redis:8-alpine3.23
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    profiles:
+      - redis
+    env_file:
+      - .env
+    command: >
+      redis-server
+      --port ${REDIS_PORT}
+      --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - ./Redis/container-data:/data
+    networks:
+      - database-network
+  redisinsight:
+    image: redis/redisinsight:3.10
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    profiles:
+      - redisinsight
+    depends_on:
+      - redis
+    networks:
+      - database-network
+
+networks:
+  database-network:
+    driver: bridge

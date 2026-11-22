@@ -1,0 +1,39 @@
+
+services:
+  mongodb:
+    image: mongo:8.3.17
+    container_name: mongodb
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+    profiles:
+      - mongodb
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+    volumes:
+      - ./MongoDB/container-data:/data/db
+    networks:
+      - database-network
+
+  mongo-express:
+    image: mongo-express:1.0.2-20-alpine3.19
+    container_name: mongo-express
+    ports:
+      - "${MONGO_EXPRESS_PORT:-8081}:8081"
+    profiles:
+      - mongodb
+    depends_on:
+      - mongodb
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/?authSource=admin
+      ME_CONFIG_BASICAUTH_ENABLED: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+    networks:
+      - database-network
+
+networks:
+  database-network:
+    driver: bridge
